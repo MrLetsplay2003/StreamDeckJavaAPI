@@ -3,7 +3,7 @@ package me.mrletsplay.streamdeckapi;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-public abstract class StreamDeckButton {
+public class StaticStreamDeckButton extends StreamDeckButton {
 
 	private int buttonNumer;
 	private BufferedImage image;
@@ -12,12 +12,16 @@ public abstract class StreamDeckButton {
 	
 	private StreamDeckButtonListener listener;
 	
+	public StaticStreamDeckButton(BufferedImage image) {
+		this.image = image;
+	}
+	
 	protected void init(int buttonNumber, StreamDeckProfile profile) {
 		this.buttonNumer = buttonNumber;
 		this.profile = profile;
 	}
 	
-	public StreamDeckButton withListener(StreamDeckButtonListener listener) {
+	public StaticStreamDeckButton withListener(StreamDeckButtonListener listener) {
 		this.listener = listener;
 		return this;
 	}
@@ -46,14 +50,21 @@ public abstract class StreamDeckButton {
 		this.pressed = pressed;
 	}
 	
-	public abstract BufferedImage getImage();
+	public StaticStreamDeckButton setImage(BufferedImage image) {
+		this.image = image;
+		return this;
+	}
 	
-	public StreamDeckButton fillColor(Color color) {
+	public BufferedImage getImage() {
+		return image;
+	}
+	
+	public StaticStreamDeckButton fillColor(Color color) {
 		this.image = ImageTools.solidColor(72, 72, color);
 		return this;
 	}
 	
-	protected void draw() {
+	public void update() {
 		profile.getDeck().drawImage(buttonNumer, image);
 	}
 	

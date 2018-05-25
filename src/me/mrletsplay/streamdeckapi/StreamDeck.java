@@ -14,21 +14,29 @@ public class StreamDeck implements InputReportListener {
 	
 	private HidDevice device;
 	private HashMap<Integer, StreamDeckButton> buttons;
+	private StreamDeckProfile currentProfile;
 
 	public StreamDeck(HidDevice device) {
 		this.device = device;
 		device.setInputReportListener(this);
 		this.buttons = new HashMap<>();
-		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
-			buttons.put(i, new StreamDeckButton(i, this));
-		}
+		this.currentProfile = new SimpleStreamDeckProfile();
 	}
 	
-	public StreamDeckButton getButton(int index) {
+	public void setProfile(StreamDeckProfile profile) {
+		this.currentProfile = profile;
+		profile.init(this);
+	}
+	
+	public StreamDeckProfile getCurrentProfile() {
+		return currentProfile;
+	}
+	
+	public StreamDeckButton getButton(StreamDeckProfile profile, int index) {
 		return buttons.get(index);
 	}
 	
-	public List<StreamDeckButton> getButtons() {
+	public List<StreamDeckButton> getButtons(StreamDeckProfile profile) {
 		return new ArrayList<>(buttons.values());
 	}
 	
@@ -38,11 +46,8 @@ public class StreamDeck implements InputReportListener {
 		device.setFeatureReport(StreamDeckAPI.BRIGHTNESS_DATA_ID, data, data.length);
 	}
 	
-	public void fillWithImage(BufferedImage image) {
-		BufferedImage[] sliced = ImageTools.slice(ImageTools.resize(image, 72 * StreamDeckAPI.NUM_BUTTON_COLUMNS, 72 * StreamDeckAPI.NUM_BUTTON_ROWS), 72, 72);
-		for(int i = 0; i < sliced.length; i++) {
-			
-		}
+	public void update() {
+		currentProfile.getButtons().forEach(StreamDeckButton::draw);
 	}
 	
 //	protected void setColorRaw(int buttonNumber, Color color) {
@@ -117,7 +122,7 @@ public class StreamDeck implements InputReportListener {
 	public void onInputReport(HidDevice device, byte reportID, byte[] reportData, int reportLength) {
 		HIDUpdate upd = new HIDUpdate(device, reportID, reportData, reportLength);
 		for(int i = 0; i < reportData.length; i++) {
-			StreamDeckButton button = getButton(i);
+			StreamDeckButton button = currentProfile.getButton(i);
 			if(button == null) continue;
 			if(reportData[i] == 1) {
 				if(!button.isPressed()) {
