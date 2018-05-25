@@ -8,10 +8,24 @@ public class StreamDeckButton {
 	private int buttonNumer;
 	private StreamDeck deck;
 	private BufferedImage image;
+	private boolean pressed;
+	private StreamDeckButtonListener listener;
 	
 	public StreamDeckButton(int buttonNumber, StreamDeck deck) {
 		this.buttonNumer = buttonNumber;
 		this.deck = deck;
+	}
+	
+	public void setListener(StreamDeckButtonListener listener) {
+		this.listener = listener;
+	}
+	
+	public boolean hasListener() {
+		return listener != null;
+	}
+	
+	public StreamDeckButtonListener getListener() {
+		return listener;
 	}
 	
 	public int getButtonNumer() {
@@ -20,6 +34,14 @@ public class StreamDeckButton {
 	
 	public StreamDeck getDeck() {
 		return deck;
+	}
+	
+	public boolean isPressed() {
+		return pressed;
+	}
+	
+	protected void setPressed(boolean pressed) {
+		this.pressed = pressed;
 	}
 	
 	public StreamDeckButton setImage(BufferedImage image) {

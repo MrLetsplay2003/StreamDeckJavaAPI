@@ -63,7 +63,7 @@ public class ImageTools {
 		return image;
 	}
 	
-	private static BufferedImage[] slice(BufferedImage img, int width, int height) {
+	public static BufferedImage[] slice(BufferedImage img, int width, int height) {
 		BufferedImage[] imgs = new BufferedImage[img.getWidth()/width * img.getHeight()/height];
 		int count = 0;
 		for (int x = 0; x < img.getWidth()/width; x++) {

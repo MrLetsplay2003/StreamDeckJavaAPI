@@ -12,7 +12,6 @@ import purejavahidapi.InputReportListener;
 
 public class StreamDeck implements InputReportListener {
 	
-	private StreamDeckListener listener;
 	private HidDevice device;
 	private HashMap<Integer, StreamDeckButton> buttons;
 
@@ -23,14 +22,6 @@ public class StreamDeck implements InputReportListener {
 		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
 			buttons.put(i, new StreamDeckButton(i, this));
 		}
-	}
-	
-	public void setListener(StreamDeckListener listener) {
-		this.listener = listener;
-	}
-	
-	public StreamDeckListener getListener() {
-		return listener;
 	}
 	
 	public StreamDeckButton getButton(int index) {
@@ -48,10 +39,13 @@ public class StreamDeck implements InputReportListener {
 	}
 	
 	public void fillWithImage(BufferedImage image) {
-		
+		BufferedImage[] sliced = ImageTools.slice(ImageTools.resize(image, 72 * StreamDeckAPI.NUM_BUTTON_COLUMNS, 72 * StreamDeckAPI.NUM_BUTTON_ROWS), 72, 72);
+		for(int i = 0; i < sliced.length; i++) {
+			
+		}
 	}
 	
-//	protected void setColor(int buttonNumber, Color color) {
+//	protected void setColorRaw(int buttonNumber, Color color) {
 //		byte[] colBuf = new byte[] {(byte) color.getBlue() /* red */, (byte) color.getGreen() /* blue */, (byte)  color.getRed() /* green */};
 //		byte[] packet = Tools.allocate(StreamDeckAPI.NUM_FIRST_PAGE_PIXELS * 3, colBuf);
 //		byte[] packet2 = Tools.allocate(StreamDeckAPI.NUM_SECOND_PAGE_PIXELS * 3, colBuf);
@@ -122,13 +116,18 @@ public class StreamDeck implements InputReportListener {
 	@Override
 	public void onInputReport(HidDevice device, byte reportID, byte[] reportData, int reportLength) {
 		HIDUpdate upd = new HIDUpdate(device, reportID, reportData, reportLength);
-		if(listener != null) {
-			for(int i = 0; i < reportData.length; i++) {
-				if(reportData[i] == 1) {
-					listener.onButtonPressed(i, upd);
-				}else {
-					listener.onButtonReleased(i, upd);
+		for(int i = 0; i < reportData.length; i++) {
+			StreamDeckButton button = getButton(i);
+			if(reportData[i] == 1) {
+				if(!button.isPressed()) {
+					if(button.hasListener()) button.getListener().onButtonPressed(upd);
 				}
+				button.setPressed(true);
+			}else {
+				if(!button.isPressed()) {
+					if(button.hasListener()) button.getListener().onButtonPressed(upd);
+				}
+				button.setPressed(false);
 			}
 		}
 	}
