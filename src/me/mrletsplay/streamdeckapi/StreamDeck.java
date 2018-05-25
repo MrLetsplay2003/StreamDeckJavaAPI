@@ -118,6 +118,7 @@ public class StreamDeck implements InputReportListener {
 		HIDUpdate upd = new HIDUpdate(device, reportID, reportData, reportLength);
 		for(int i = 0; i < reportData.length; i++) {
 			StreamDeckButton button = getButton(i);
+			if(button == null) continue;
 			if(reportData[i] == 1) {
 				if(!button.isPressed()) {
 					if(button.hasListener()) button.getListener().onButtonPressed(upd);
