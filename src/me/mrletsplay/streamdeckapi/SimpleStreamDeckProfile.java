@@ -1,11 +1,13 @@
 package me.mrletsplay.streamdeckapi;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SimpleStreamDeckProfile extends StreamDeckProfile {
 	
-	private List<StaticStreamDeckButton> buttons;
+	private HashMap<Integer, StaticStreamDeckButton> buttons;
 	
 	public void fillWithImage(BufferedImage image) {
 		BufferedImage[] sliced = ImageTools.slice(ImageTools.resize(image, 72 * StreamDeckAPI.NUM_BUTTON_COLUMNS, 72 * StreamDeckAPI.NUM_BUTTON_ROWS), 72, 72);
@@ -19,7 +21,7 @@ public class SimpleStreamDeckProfile extends StreamDeckProfile {
 	
 	@Override
 	public List<? extends StreamDeckButton> getButtons() {
-		return buttons;
+		return new ArrayList<>(buttons.values());
 	}
 	
 	@Deprecated

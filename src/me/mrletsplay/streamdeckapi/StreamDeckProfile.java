@@ -1,15 +1,16 @@
 package me.mrletsplay.streamdeckapi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class StreamDeckProfile {
 	
-	private List<StreamDeckButton> buttons;
+	private HashMap<Integer, StreamDeckButton> buttons;
 	private StreamDeck deck;
 	
 	public StreamDeckProfile() {
-		buttons = new ArrayList<>(StreamDeckAPI.NUM_BUTTONS);
+		buttons = new HashMap<>(StreamDeckAPI.NUM_BUTTONS);
 	}
 	
 	protected void init(StreamDeck deck) {
@@ -17,7 +18,7 @@ public class StreamDeckProfile {
 	}
 	
 	public StreamDeckProfile setButton(int index, StreamDeckButton button) {
-		buttons.set(index, button);
+		buttons.put(index, button);
 		return this;
 	}
 	
@@ -26,7 +27,7 @@ public class StreamDeckProfile {
 	}
 	
 	public List<? extends StreamDeckButton> getButtons() {
-		return buttons;
+		return new ArrayList<>(buttons.values());
 	}
 	
 	public StreamDeck getDeck() {
