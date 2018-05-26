@@ -9,6 +9,10 @@ public class SimpleStreamDeckProfile extends StreamDeckProfile {
 	
 	private HashMap<Integer, StaticStreamDeckButton> buttons;
 	
+	public SimpleStreamDeckProfile() {
+		buttons = new HashMap<>(StreamDeckAPI.NUM_BUTTONS);
+	}
+	
 	public void fillWithImage(BufferedImage image) {
 		BufferedImage[] sliced = ImageTools.slice(ImageTools.resize(image, 72 * StreamDeckAPI.NUM_BUTTON_COLUMNS, 72 * StreamDeckAPI.NUM_BUTTON_ROWS), 72, 72);
 		for(int i = 0; i < sliced.length; i++) {
