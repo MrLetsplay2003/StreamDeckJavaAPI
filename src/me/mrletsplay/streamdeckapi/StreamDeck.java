@@ -21,6 +21,7 @@ public class StreamDeck implements InputReportListener {
 		this.device = device;
 		device.setInputReportListener(this);
 		this.buttons = new HashMap<>();
+		this.profiles = new HashMap<>();
 	}
 	
 	public void registerProfile(StreamDeckProfile profile) {
@@ -65,6 +66,7 @@ public class StreamDeck implements InputReportListener {
 //	}
 	
 	protected void drawImage(int buttonNumber, BufferedImage image) {
+		if(image == null) return;
 		int[][] colors = ImageTools.convertTo2DWithoutUsingGetRGB(ImageTools.resize(image, 72, 72));
 
 		ByteArrayOutputStream fOut = new ByteArrayOutputStream();
