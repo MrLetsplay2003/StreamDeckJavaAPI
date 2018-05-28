@@ -12,9 +12,6 @@ public class StreamDeckProfile {
 	
 	public StreamDeckProfile(String name) {
 		buttons = new HashMap<>(StreamDeckAPI.NUM_BUTTONS);
-		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
-			setButton(i, new StreamDeckButton());
-		}
 	}
 	
 	public String getName() {
