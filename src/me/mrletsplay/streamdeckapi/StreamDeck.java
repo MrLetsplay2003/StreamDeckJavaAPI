@@ -54,22 +54,22 @@ public class StreamDeck implements InputReportListener {
 		if(currentProfile == null) throw new IllegalArgumentException("No profile is currently selected");
 		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
 			StreamDeckButton b = getButton(i);
-			System.out.println(b);
 			if(b != null) {
+				if(b.getImage() == null) throw new IllegalArgumentException("Button image is null");
 				drawImage(i, b.getImage());
 			}else {
-				drawImage(i, ImageTools.solidColor(72, 72, Color.BLACK));
+				setColorRaw(i, Color.BLACK);
 			}
 		}
 	}
 	
-//	protected void setColorRaw(int buttonNumber, Color color) {
-//		byte[] colBuf = new byte[] {(byte) color.getBlue() /* red */, (byte) color.getGreen() /* blue */, (byte)  color.getRed() /* green */};
-//		byte[] packet = Tools.allocate(StreamDeckAPI.NUM_FIRST_PAGE_PIXELS * 3, colBuf);
-//		byte[] packet2 = Tools.allocate(StreamDeckAPI.NUM_SECOND_PAGE_PIXELS * 3, colBuf);
-//		writePage1(buttonNumber, packet);
-//		writePage2(buttonNumber, packet2);
-//	}
+	protected void setColorRaw(int buttonNumber, Color color) {
+		byte[] colBuf = new byte[] {(byte) color.getBlue() /* red */, (byte) color.getGreen() /* blue */, (byte)  color.getRed() /* green */};
+		byte[] packet = Tools.allocate(StreamDeckAPI.NUM_FIRST_PAGE_PIXELS * 3, colBuf);
+		byte[] packet2 = Tools.allocate(StreamDeckAPI.NUM_SECOND_PAGE_PIXELS * 3, colBuf);
+		writePage1(buttonNumber, packet);
+		writePage2(buttonNumber, packet2);
+	}
 	
 	protected void drawImage(int buttonNumber, BufferedImage image) {
 		if(image == null) return;
