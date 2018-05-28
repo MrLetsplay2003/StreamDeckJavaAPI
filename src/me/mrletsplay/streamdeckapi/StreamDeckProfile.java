@@ -6,11 +6,19 @@ import java.util.List;
 
 public class StreamDeckProfile {
 	
+	private String name;
 	private HashMap<Integer, StreamDeckButton> buttons;
 	private StreamDeck deck;
 	
-	public StreamDeckProfile() {
+	public StreamDeckProfile(String name) {
 		buttons = new HashMap<>(StreamDeckAPI.NUM_BUTTONS);
+		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
+			setButton(i, new StreamDeckButton());
+		}
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	protected void init(StreamDeck deck) {
@@ -19,6 +27,7 @@ public class StreamDeckProfile {
 	
 	public StreamDeckProfile setButton(int index, StreamDeckButton button) {
 		buttons.put(index, button);
+		button.init(this, index);
 		return this;
 	}
 	

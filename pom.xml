@@ -32,5 +32,10 @@
 		    <artifactId>purejavahidapi</artifactId>
 		    <version>master-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.github.mrletsplay2003</groupId>
+		    <artifactId>MrCore</artifactId>
+		    <version>master-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

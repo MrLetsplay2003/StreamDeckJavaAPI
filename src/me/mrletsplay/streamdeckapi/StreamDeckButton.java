@@ -2,59 +2,68 @@ package me.mrletsplay.streamdeckapi;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
-public abstract class StreamDeckButton {
+import me.mrletsplay.streamdeckapi.StreamDeck.HIDUpdate;
 
-	private int buttonNumer;
+public class StreamDeckButton {
+	
 	private BufferedImage image;
-	private boolean pressed;
 	private StreamDeckProfile profile;
-	
-	private StreamDeckButtonListener listener;
-	
-	protected void init(int buttonNumber, StreamDeckProfile profile) {
-		this.buttonNumer = buttonNumber;
+	private boolean pressed;
+	private int buttonNumber;
+	private Consumer<HIDUpdate> onPressed, onReleased;
+
+	protected void init(StreamDeckProfile profile, int buttonNumber) {
 		this.profile = profile;
+		this.buttonNumber = buttonNumber;
 	}
 	
-	public StreamDeckButton withListener(StreamDeckButtonListener listener) {
-		this.listener = listener;
-		return this;
-	}
-	
-	public boolean hasListener() {
-		return listener != null;
-	}
-	
-	public StreamDeckButtonListener getListener() {
-		return listener;
-	}
-	
-	public int getButtonNumer() {
-		return buttonNumer;
+	public int getButtonNumber() {
+		return buttonNumber;
 	}
 	
 	public StreamDeckProfile getProfile() {
 		return profile;
 	}
 	
-	public boolean isPressed() {
-		return pressed;
-	}
-	
 	protected void setPressed(boolean pressed) {
 		this.pressed = pressed;
 	}
 	
-	public abstract BufferedImage getImage();
+	public boolean isPressed() {
+		return pressed;
+	}
+	
+	public void setImage(BufferedImage image) {
+		this.image = image;
+	}
+	
+	public BufferedImage getImage() {
+		return image;
+	}
+	
+	public StreamDeckButton onPressed(Consumer<HIDUpdate> onPressed) {
+		this.onPressed = onPressed;
+		return this;
+	}
+	
+	public StreamDeckButton onReleased(Consumer<HIDUpdate> onReleased) {
+		this.onReleased = onReleased;
+		return this;
+	}
+	
+	public Consumer<HIDUpdate> getOnPressed() {
+		return onPressed;
+	}
+	
+	public Consumer<HIDUpdate> getOnReleased() {
+		return onReleased;
+	}
 	
 	public StreamDeckButton fillColor(Color color) {
 		this.image = ImageTools.solidColor(72, 72, color);
 		return this;
-	}
-	
-	protected void draw() {
-		profile.getDeck().drawImage(buttonNumer, image);
 	}
 	
 }

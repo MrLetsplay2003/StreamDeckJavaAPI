@@ -14,18 +14,23 @@ public class StreamDeck implements InputReportListener {
 	
 	private HidDevice device;
 	private HashMap<Integer, StreamDeckButton> buttons;
+	private HashMap<String, StreamDeckProfile> profiles;
 	private StreamDeckProfile currentProfile;
 
 	public StreamDeck(HidDevice device) {
 		this.device = device;
 		device.setInputReportListener(this);
 		this.buttons = new HashMap<>();
-		this.currentProfile = new SimpleStreamDeckProfile();
 	}
 	
-	public void setProfile(StreamDeckProfile profile) {
-		this.currentProfile = profile;
-		profile.init(this);
+	public void registerProfile(StreamDeckProfile profile) {
+		profiles.put(profile.getName(), profile);
+	}
+	
+	public void switchProfile(String name) {
+		if(!profiles.containsKey(name)) throw new IllegalArgumentException("Specified profile doesn't exist");
+		currentProfile = profiles.get(name);
+		currentProfile.init(this);
 	}
 	
 	public StreamDeckProfile getCurrentProfile() {
@@ -47,7 +52,8 @@ public class StreamDeck implements InputReportListener {
 	}
 	
 	public void update() {
-		currentProfile.getButtons().forEach(StreamDeckButton::draw);
+		if(currentProfile == null) throw new IllegalArgumentException("No profile is currently selected");
+		currentProfile.getButtons().forEach(b -> drawImage(b.getButtonNumber(), b.getImage()));
 	}
 	
 //	protected void setColorRaw(int buttonNumber, Color color) {
@@ -126,12 +132,12 @@ public class StreamDeck implements InputReportListener {
 			if(button == null) continue;
 			if(reportData[i] == 1) {
 				if(!button.isPressed()) {
-					if(button.hasListener()) button.getListener().onButtonPressed(upd);
+					if(button.getOnPressed() != null) button.getOnPressed().accept(upd);
 				}
 				button.setPressed(true);
 			}else {
 				if(!button.isPressed()) {
-					if(button.hasListener()) button.getListener().onButtonPressed(upd);
+					if(button.getOnReleased() != null) button.getOnReleased().accept(upd);
 				}
 				button.setPressed(false);
 			}
@@ -167,6 +173,14 @@ public class StreamDeck implements InputReportListener {
 		public int getReportLength() {
 			return reportLength;
 		}
+		
+	}
+	
+	public static class UpdateMethod {
+		
+		public static final UpdateMethod MANUAL = new UpdateMethod();
+		
+		
 		
 	}
 	
