@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,37 +12,36 @@ import purejavahidapi.InputReportListener;
 public class StreamDeck implements InputReportListener {
 	
 	private HidDevice device;
-	private HashMap<Integer, StreamDeckButton> buttons;
 	private HashMap<String, StreamDeckProfile> profiles;
 	private StreamDeckProfile currentProfile;
 
 	public StreamDeck(HidDevice device) {
 		this.device = device;
 		device.setInputReportListener(this);
-		this.buttons = new HashMap<>();
 		this.profiles = new HashMap<>();
 	}
 	
 	public void registerProfile(StreamDeckProfile profile) {
 		profiles.put(profile.getName(), profile);
+		profile.init(this);
 	}
 	
-	public void switchProfile(String name) {
+	public void selectProfile(String name) {
 		if(!profiles.containsKey(name)) throw new IllegalArgumentException("Specified profile doesn't exist");
 		currentProfile = profiles.get(name);
-		currentProfile.init(this);
+		update();
 	}
 	
 	public StreamDeckProfile getCurrentProfile() {
 		return currentProfile;
 	}
 	
-	public StreamDeckButton getButton(StreamDeckProfile profile, int index) {
-		return buttons.get(index);
+	public StreamDeckButton getButton(int index) {
+		return currentProfile.getButton(index);
 	}
 	
-	public List<StreamDeckButton> getButtons(StreamDeckProfile profile) {
-		return new ArrayList<>(buttons.values());
+	public List<? extends StreamDeckButton> getButtons(StreamDeckProfile profile) {
+		return currentProfile.getButtons();
 	}
 	
 	public void setBrightness(int brightness) {
@@ -54,7 +52,15 @@ public class StreamDeck implements InputReportListener {
 	
 	public void update() {
 		if(currentProfile == null) throw new IllegalArgumentException("No profile is currently selected");
-		currentProfile.getButtons().forEach(b -> drawImage(b.getButtonNumber(), b.getImage()));
+		for(int i = 0; i < StreamDeckAPI.NUM_BUTTONS; i++) {
+			StreamDeckButton b = getButton(i);
+			System.out.println(b);
+			if(b != null) {
+				drawImage(i, b.getImage());
+			}else {
+				drawImage(i, ImageTools.solidColor(72, 72, Color.BLACK));
+			}
+		}
 	}
 	
 //	protected void setColorRaw(int buttonNumber, Color color) {
